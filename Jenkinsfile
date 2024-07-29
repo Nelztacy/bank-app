@@ -14,7 +14,7 @@ pipeline {
         stage('SCM_Checkout') {
             steps {
                 echo 'Perform SCM Checkout'
-				git 'https://github.com/LoksaiETA/SA11-BankingApp.git'
+				git 'https://github.com/Nelztacy/bank-app'
             }
         }
         stage('Application_Build') {
@@ -22,30 +22,14 @@ pipeline {
                 echo 'Perform Maven Build'
 				sh 'mvn -Dmaven.test.failure.ignore=true clean package'
             }
-			  post {
-				failure {
-				  sh "echo 'Send mail on failure'"
-				  mail to:"loksaieta223@gmail.com", from: 'loksaieta223@gmail.com', subject:"FAILURE: ${currentBuild.fullDisplayName}", body: "Build failed."
-				}
-			  }
-        }
+		}
         stage('Build Docker Image') {
             steps {
-				sh "docker build -t loksaieta/bankapp-eta-app:V${BUILD_NUMBER} ."
+				sh "docker build -t nelzone/bankapp-eta-app:V${BUILD_NUMBER} ."
 				sh 'docker image list'
-				sh "docker tag loksaieta/bankapp-eta-app:V${BUILD_NUMBER} loksaieta/bankapp-eta-app:latest"
+				sh "docker tag nelzone/bankapp-eta-app:V${BUILD_NUMBER} nelzone/bankapp-eta-app:latest"
             }
-              post {
-                success {
-                  sh "echo 'Send mail docker Build Success'"
-                  mail to:"loksaieta223@gmail.com", from: 'loksaieta223@gmail.com', subject:"App Image Created Please validate", body: "App Image Created Please validate - loksaieta/bankapp-eta-app:latest"
-                }
-                failure {
-                  sh "echo 'Send mail docker Build failure'"
-                  mail to:"loksaieta223@gmail.com", from: 'loksaieta223@gmail.com', subject:"FAILURE: ${currentBuild.fullDisplayName}", body: "Image Build failed."
-                }
-              }	
-        }
+              
         stage('Approve - push Image to dockerhub'){
             steps{
                 
@@ -64,7 +48,7 @@ pipeline {
 		}
 		stage('Publish_to_Docker_Registry') {
 			steps {
-				sh "docker push loksaieta/bankapp-eta-app:latest"
+				sh "docker push nelzone/bankapp-eta-app:latest"
 			}
 		}
 		stage('Deploy to Kubernetes_Cluster') {
