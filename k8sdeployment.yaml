@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: bankapp-eta-deploy
   labels:
-    app: bankapp-eta-app1
+    app: bankapp-eta-app
 spec:
   replicas: 3
   selector:
@@ -16,16 +16,16 @@ spec:
     spec:
       containers:
       - name: bankapp-eta-container
-        image: loksaieta/bankapp-eta-app:latest
+        image: nelzone/bankapp-app:latest
         ports:
         - containerPort: 8081
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: bankapp-eta-np-service1
+  name: bankapp-np-service
   labels:
-    app: bankapp-eta-app1
+    app: bankapp-eta-app
 spec:
   selector:
     app: bankapp-eta-app
