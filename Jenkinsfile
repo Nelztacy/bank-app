@@ -58,13 +58,8 @@ pipeline {
 
         stage('Deploy to Tomcat') {
             steps {
-                script {
-                    // Print the working directory and list files for debugging
-                    sh 'pwd'
-                    sh 'ls -l target/'
-
-                    // Deploy the .jar file to Tomcat
-                    sh 'scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/bank-app/target/banking-0.0.1-SNAPSHOT.jar root@10.0.0.174:/usr/local/tomcat10/webapps/'
+                sshagent(['your-ssh-credential-id']) {
+                    sh 'scp /var/lib/jenkins/workspace/bank-app/target/banking-0.0.1-SNAPSHOT.jar root@10.0.0.174:/usr/local/tomcat10/webapps/'
                 }
             }
         }
