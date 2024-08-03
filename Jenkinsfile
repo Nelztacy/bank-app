@@ -44,7 +44,9 @@ pipeline {
 
         stage('Login to DockerHub') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                withCredentials([usernamePassword(credentialsId: 'dockerloginid', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                }
             }
         }
 
@@ -56,8 +58,14 @@ pipeline {
 
         stage('Deploy to Tomcat') {
             steps {
-                // Ensure that the .jar file path is correct
-                sh 'scp target/bank-app/target/*.jar root@10.0.0.174:/usr/local/tomcat10/webapps'
+                script {
+                    // Print the working directory and list files for debugging
+                    sh 'pwd'
+                    sh 'ls -l target/'
+
+                    // Deploy the .jar file to Tomcat
+                    sh 'scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/bank-app/target/banking-0.0.1-SNAPSHOT.jar root@10.0.0.174:/usr/local/tomcat10/webapps/'
+                }
             }
         }
     }
