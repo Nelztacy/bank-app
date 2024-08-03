@@ -56,7 +56,7 @@ pipeline {
 
         stage('Deploy to Tomcat') {
             steps {
-                deploy adapters: [tomcat9(credentialsId: 'tomcat-id', path: '', url: 'http://10.0.0.174:8080/')], contextPath: '/var/lib/jenkins/workspace/bank-app/target', war: '**/*.jar'
+                scp target/bank-app/target.jar technel@10.0.0.174:/usr/local/tomcat10/webapps
             }
         }
     }
