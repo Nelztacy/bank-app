@@ -33,7 +33,7 @@ pipeline {
             }
         }
 
-        stage('Approve - push Image to DockerHub') {
+        stage('Approve - Push Image to DockerHub') {
             steps {
                 script {
                     // Send an approval prompt
@@ -56,7 +56,8 @@ pipeline {
 
         stage('Deploy to Tomcat') {
             steps {
-                scp target/bank-app/target.jar technel@10.0.0.174:/usr/local/tomcat10/webapps
+                // Ensure that the .jar file path is correct
+                sh 'scp target/bank-app/target/*.jar technel@10.0.0.174:/usr/local/tomcat10/webapps'
             }
         }
     }
