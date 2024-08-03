@@ -57,7 +57,7 @@ pipeline {
         stage('Deploy to Tomcat') {
             steps {
                 // Ensure that the .jar file path is correct
-                sh 'scp target/bank-app/target/*.jar technel@10.0.0.174:/usr/local/tomcat10/webapps'
+                sh 'scp target/bank-app/target/*.jar root@10.0.0.174:/usr/local/tomcat10/webapps'
             }
         }
     }
