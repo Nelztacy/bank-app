@@ -1,0 +1,14 @@
+# Use an official Java runtime as a parent image
+FROM openjdk:11-jre-slim
+
+# Define a build-time argument for the JAR file name
+ARG JAR_FILE=your-app.jar
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the JAR file into the container
+COPY ${JAR_FILE} /app/app.jar
+
+# Run the JAR file
+CMD ["java", "-jar", "/app/app.jar"]
