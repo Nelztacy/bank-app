@@ -10,16 +10,16 @@ pipeline {
     }
 
     stages {
-        stage('SCM_Checkout') {
+        stage('SCM Checkout') {
             steps {
-                echo 'Perform SCM Checkout'
+                echo 'Performing SCM Checkout'
                 git 'https://github.com/Nelztacy/bank-app'
             }
         }
 
-        stage('Application_Build') {
+        stage('Application Build') {
             steps {
-                echo 'Perform Maven Build'
+                echo 'Performing Maven Build'
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package'
             }
         }
@@ -37,29 +37,24 @@ pipeline {
             steps {
                 script {
                     // Send an approval prompt
-                    env.APPROVED_DEPLOY = input message: 'User input required. Choose "Yes" | "Abort"'
+                    env.APPROVED_DEPLOY = input message: 'User input required. Choose "Yes" to continue | "Abort" to stop', 
+                        ok: 'Yes', parameters: [choice(name: 'Proceed', choices: ['Yes', 'Abort'], description: 'Proceed with Docker image push?')]
                 }
             }
         }
 
-        stage('Login to DockerHub') {
-            steps {
-                withDockerRegistry(credentialsId: 'Dockerhub_Cred', toolName: 'Docker') {
-                    sh 'echo $Dockerhub_Cred_PSW | docker login -u $Dockerhub_Cred_USR --password-stdin'
+        stage('Login and Push to DockerHub') {
+            when {
+                expression {
+                    env.APPROVED_DEPLOY == 'Yes'
                 }
             }
-        }
-
-        stage('Publish to Docker Registry') {
             steps {
-                sh "docker push nelzone/bankapp-eta-app:latest"
-            }
-        }
-
-        stage('Deploy to Tomcat') {
-            steps {
-                sshagent(['your-ssh-credential-id']) {
-                    sh 'scp /var/lib/jenkins/workspace/bank-app/target/banking-0.0.1-SNAPSHOT.jar root@10.0.0.174:/usr/local/tomcat10/webapps/'
+                script {
+                    withDockerRegistry(credentialsId: 'dockerloginid') {
+                        sh 'docker --version' // Optional: Verify Docker is available
+                        sh "docker push nelzone/bankapp-eta-app:latest"
+                    }
                 }
             }
         }
