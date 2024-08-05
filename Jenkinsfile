@@ -27,16 +27,17 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker Image'
-                sh "docker build -t nelzone/bankapp-eta-app:V${BUILD_NUMBER} ."
-                sh 'docker image list'
-                sh "docker tag nelzone/bankapp-eta-app:V${BUILD_NUMBER} nelzone/bankapp-eta-app:latest"
+                sh '''
+                    docker build -t nelzone/bankapp-eta-app:V${BUILD_NUMBER} .
+                    docker image list
+                    docker tag nelzone/bankapp-eta-app:V${BUILD_NUMBER} nelzone/bankapp-eta-app:latest
+                '''
             }
         }
 
         stage('Approve - Push Image to DockerHub') {
             steps {
                 script {
-                    // Send an approval prompt
                     env.APPROVED_DEPLOY = input message: 'User input required. Choose "Yes" to continue | "Abort" to stop', 
                         ok: 'Yes', parameters: [choice(name: 'Proceed', choices: ['Yes', 'Abort'], description: 'Proceed with Docker image push?')]
                 }
