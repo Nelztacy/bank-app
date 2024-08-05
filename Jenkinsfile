@@ -69,7 +69,7 @@ pipeline {
                         docker rm bankapp-eta-app || true
 
                         # Run a new container from the latest image
-                        docker run -d --name bankapp-eta-app -p 8081:8080 nelzone/bankapp-eta-app:latest
+                        docker run -d --name bankapp-eta-app -p 8081:8081 nelzone/bankapp-eta-app:latest
                     '''
                 }
             }
