@@ -51,7 +51,7 @@ pipeline {
             }
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'dockerloginid') {
+                    withDockerRegistry(credentialsId: 'Dockerhub_Cred') {
                         sh 'docker --version' // Optional: Verify Docker is available
                         sh "docker push nelzone/bankapp-eta-app:latest"
                     }
