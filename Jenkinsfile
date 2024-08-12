@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {    
-        DOCKERHUB_CREDENTIALS = credentials('Dockerhub_Cred')
+        DOCKERHUB_CREDENTIALS = credentials('docker-id-login')
     }
 
     stages {
@@ -50,13 +50,6 @@ pipeline {
         stage('Publish_to_Docker_Registry') {
             steps {
                 sh "docker push nelzone/bankapp-eta-app:latest"
-            }
-        }
-
-        stage('Deploy to K8S') {
-            steps {
-                withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'kubernetes-credentials', namespace: 'dev', restrictKubeConfigAccess: false, serverUrl: 'https://vm2:6443/') {   
-                sh "kubectl apply -f k8sdeployment.yaml"}
             }
         }
     }
