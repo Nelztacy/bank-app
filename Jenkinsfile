@@ -52,5 +52,12 @@ pipeline {
                 sh "docker push nelzone/bankapp-eta-app:latest"
             }
         }
+
+        stage('Deploy to K8S') {
+            steps {
+                withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'kubernetes-credentials', namespace: 'dev', restrictKubeConfigAccess: false, serverUrl: 'https://vm2:6443/') {   
+                sh "kubectl apply -f k8sdeployment.yaml"}
+            }
+        }
     }
 }
